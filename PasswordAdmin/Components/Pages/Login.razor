@@ -1,4 +1,90 @@
 @page "/login"
+@rendermode InteractiveServer
 
-<h3>Login</h3>
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager Nav
+
+<h1>Login</h1>
 <p>Log into your account.</p>
+
+<EditForm Model="@Input" OnValidSubmit="HandleLogin" FormName="login-form">
+    <AntiforgeryToken />
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div style="max-width: 420px;">
+        <div style="margin-bottom: 12px;">
+            <label>Email</label><br />
+            <InputText @bind-Value="Input.Email" class="form-control" />
+            <ValidationMessage For="@(() => Input.Email)" />
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label>Password</label><br />
+            <InputText @bind-Value="Input.Password" type="password" class="form-control" />
+            <ValidationMessage For="@(() => Input.Password)" />
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <InputCheckbox @bind-Value="Input.RememberMe" />
+            <label style="margin-left: 6px;">Remember me</label>
+        </div>
+
+        <button type="submit" disabled="@IsBusy">Login</button>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(Message))
+{
+    <p style="margin-top: 12px;">@Message</p>
+}
+
+@code {
+    private string? Message;
+    private bool IsBusy;
+
+    private LoginInputModel Input { get; set; } = new();
+
+    private async Task HandleLogin()
+    {
+        if (IsBusy) return;
+
+        IsBusy = true;
+        Message = null;
+
+        try
+        {
+            var result = await SignInManager.PasswordSignInAsync(
+                userName: Input.Email,
+                password: Input.Password,
+                isPersistent: Input.RememberMe,
+                lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                Nav.NavigateTo("/", forceLoad: true);
+                return;
+            }
+
+            Message = "❌ Invalid login attempt.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private class LoginInputModel
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+    }
+}
