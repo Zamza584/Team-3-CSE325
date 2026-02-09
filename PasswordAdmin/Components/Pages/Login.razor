@@ -1,5 +1,7 @@
 @page "/login"
 @rendermode InteractiveServer
+@using PasswordAdmin.Models
+
 
 @inject NavigationManager Nav
 
@@ -15,23 +17,27 @@
     <AntiforgeryToken />
 
     <div style="margin-bottom:12px;">
-        <label>Email</label><br />
+        <label>Email</label>
         <input name="email" class="form-control" />
     </div>
 
     <div style="margin-bottom:12px;">
-        <label>Password</label><br />
-        <input name="password" type="password" class="form-control" />
+        <label for="password">Password</label>
+        <input name="password" type="@dp1.getType()" class="form-control" id="password" />
+        <div class="eye-logo" @onclick="@dp1.ShowPassword"><img src="@dp1.getEyeSrc()" alt="@dp1.getEyeAlt()"></div>
     </div>
 
     <div style="margin-bottom:12px;">
-        <input name="rememberMe" type="checkbox" />
-        <label style="margin-left:6px;">Remember me</label>
-    </div>
 
-    <button type="submit">Login</button>
-</form>
+        <label style="margin-left:6px;">
+            <input style="margin-right: 10px;" name="rememberMe" type="checkbox" />Remember me</label>
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
 
 @code {
+    DisplayPassword dp1 = new DisplayPassword();
+
     private bool HasError => Nav.ToAbsoluteUri(Nav.Uri).Query.Contains("error=1");
 }
