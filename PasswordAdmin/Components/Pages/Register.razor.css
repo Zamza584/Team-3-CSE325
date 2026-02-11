@@ -1,0 +1,20 @@
+.eye-logo {
+  width: fit-content;
+  display: inline;
+}
+
+.eye-logo img {
+  display: inline;
+  width: 20px;
+  height: 20px;
+  margin-left: 1rem;
+}
+
+label {
+  display: block;
+}
+
+form input {
+  display: inline;
+  width: 60%;
+}
