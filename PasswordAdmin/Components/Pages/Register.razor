@@ -1,6 +1,5 @@
 @page "/register"
 @rendermode InteractiveServer
-
 @inject NavigationManager Nav
 
 <h1>Register</h1>
@@ -8,28 +7,47 @@
 
 @if (ErrorMessage is not null)
 {
-    <p style="color:#b00020; font-weight:600;">❌ @ErrorMessage</p>
+    <div style="color:#b00020; font-weight:600; padding: 12px; background-color: #ffebee; border-radius: 4px; margin-bottom: 16px; max-width:420px;">
+        ❌ @ErrorMessage
+    </div>
 }
 
 <form method="post" action="/account/register" style="max-width:420px;">
     <AntiforgeryToken />
 
-    <div style="margin-bottom:12px;">
-        <label>Email</label><br />
-        <input name="email" class="form-control" />
+    <div style="margin-bottom:16px;">
+        <label style="display:block; margin-bottom:4px; font-weight:600;">Email</label>
+        <input name="email" type="email" class="form-control" required />
     </div>
 
-    <div style="margin-bottom:12px;">
-        <label>Password</label><br />
-        <input name="password" type="password" class="form-control" />
+    <div style="margin-bottom:16px;">
+        <label style="display:block; margin-bottom:4px; font-weight:600;">First Name</label>
+        <input name="firstName" type="text" class="form-control" required />
     </div>
 
-    <div style="margin-bottom:12px;">
-        <label>Confirm Password</label><br />
-        <input name="confirmPassword" type="password" class="form-control" />
+    <div style="margin-bottom:16px;">
+        <label style="display:block; margin-bottom:4px; font-weight:600;">Last Name</label>
+        <input name="lastName" type="text" class="form-control" required />
     </div>
 
-    <button type="submit">Create account</button>
+    <div style="margin-bottom:16px;">
+        <label style="display:block; margin-bottom:4px; font-weight:600;">Password</label>
+        <input name="password" type="password" class="form-control" required />
+        <small style="color:#666; display:block; margin-top:4px;">
+            Password must be at least 6 characters, contain 1 uppercase and 1 number
+        </small>
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label style="display:block; margin-bottom:4px; font-weight:600;">Confirm Password</label>
+        <input name="confirmPassword" type="password" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Account</button>
+    
+    <p style="margin-top:16px;">
+        Already have an account? <a href="/login">Login here</a>
+    </p>
 </form>
 
 @code {
@@ -39,7 +57,11 @@
         {
             var q = Nav.ToAbsoluteUri(Nav.Uri).Query;
             if (q.Contains("error=pwdmatch")) return "Passwords do not match.";
-            if (q.Contains("error=1")) return "Could not create the user (email may already exist or password rules).";
+            if (q.Contains("error=exists")) return "This email is already registered.";
+            if (q.Contains("error=passwordlength")) return "Password must be at least 6 characters long.";
+            if (q.Contains("error=passworddigit")) return "Password must contain at least one number.";
+            if (q.Contains("error=passwordupper")) return "Password must contain at least one uppercase letter.";
+            if (q.Contains("error=1")) return "Could not create account. Please check your information.";
             return null;
         }
     }
