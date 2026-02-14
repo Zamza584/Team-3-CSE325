@@ -2,6 +2,7 @@ using Supabase;
 using PasswordAdmin.Models;
 using Microsoft.AspNetCore.Identity;
 
+namespace PasswordAdmin.Services; 
 public class UserService
 {
     private readonly Client _client;

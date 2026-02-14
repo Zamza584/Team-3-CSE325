@@ -37,9 +37,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Supabase configuration (from your teammate's code)
+// Supabase configuration
 var supabaseUrl = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_URL");
 var supabaseKey = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_KEY");
+
+// Check if Supabase credentials are configured
+if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
+{
+    throw new Exception("Supabase credentials not found in environment variables. Please check your .env file.");
+}
 
 var options = new SupabaseOptions
 {
@@ -54,20 +60,6 @@ builder.Services.AddScoped<UserService>();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
-
-var supabaseUrl = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_URL"); 
-var supabaseKey = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_KEY"); ;
-
-var options = new SupabaseOptions
-{
-    AutoConnectRealtime = false
-};
-
-var client = new Supabase.Client(supabaseUrl, supabaseKey, options);
-await client.InitializeAsync();
-
-builder.Services.AddSingleton(client); 
-builder.Services.AddScoped<UserService>(); 
 
 var app = builder.Build();
 
@@ -131,7 +123,7 @@ app.MapPost("/account/register", async (
         // Create user in Supabase
         var supabaseResult = await userService.Register(email, password, firstName, lastName);
         
-        if (supabaseResult.ok)
+        if (supabaseResult.ok && supabaseResult.user != null)
         {
             // Sign in the user
             await signInManager.SignInAsync(identityUser, isPersistent: false);
