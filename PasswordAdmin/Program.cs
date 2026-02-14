@@ -55,19 +55,19 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-var supabaseUrl = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_URL"); //used ai
-var supabaseKey = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_KEY"); ;//used ai
+var supabaseUrl = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_URL"); 
+var supabaseKey = Environment.GetEnvironmentVariable("EXPO_PUBLIC_SUPABASE_KEY"); ;
 
-var options = new SupabaseOptions//used ai
+var options = new SupabaseOptions
 {
-    AutoConnectRealtime = false//used ai
-};//used ai
+    AutoConnectRealtime = false
+};
 
-var client = new Supabase.Client(supabaseUrl, supabaseKey, options);//used ai
-await client.InitializeAsync();//used ai
+var client = new Supabase.Client(supabaseUrl, supabaseKey, options);
+await client.InitializeAsync();
 
-builder.Services.AddSingleton(client); // used ai 
-builder.Services.AddScoped<UserService>(); // used ai 
+builder.Services.AddSingleton(client); 
+builder.Services.AddScoped<UserService>(); 
 
 var app = builder.Build();
 
