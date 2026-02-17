@@ -9,7 +9,7 @@ public class VaultItem : BaseModel
     [PrimaryKey("id")]
     public int Id { get; set; }
     [Column("created_at")]
-    public string CreatedAt { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
     [Column("user_id")]
     public int UserId { get; set; }
     [Column("encrypted_password")]
