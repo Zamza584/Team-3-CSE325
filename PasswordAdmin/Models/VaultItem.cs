@@ -16,5 +16,9 @@ public class VaultItem : BaseModel
     public string EncryptedPassword { get; set; } = string.Empty;
     [Column("user_name")]
     public string? UserName { get; set; }
+    [Column("description")]
+    public string Description { get; set; } = string.Empty;
+    [Column("title")]
+    public string Title { get; set; } = string.Empty;
 
 }
